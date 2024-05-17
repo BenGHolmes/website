@@ -33,7 +33,7 @@ func New() (IpService, error) {
 
 func (ips *ipService) Start() {
 	fmt.Println("INFO: Starting IP Service")
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(5 * time.Minute)
 	go func() {
 		for {
 			<-ticker.C
