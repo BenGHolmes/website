@@ -48,22 +48,28 @@ func (ips *ipService) verifyCorrectIPAddress() {
 	oldIp, err := getPreviousPublicIP()
 	if err != nil {
 		fmt.Printf("ERROR: couldn't get previous public IP: %v\n", err)
+		return
 	}
 
 	newIp, err := getCurrentPublicIP()
 	if err != nil {
 		fmt.Printf("ERROR: couldn't get current public IP: %v\n", err)
+		return
 	}
 
 	// Return if the IP matches
-	if oldIp == newIp {
+	if *oldIp == *newIp {
 		fmt.Println("INFO: IP has not changed")
+		return
 	}
 
 	err = ips.updateIPAddress(*oldIp, *newIp)
 	if err != nil {
 		fmt.Printf("ERROR: couldn't update IP: %v\n", err)
+		return
 	}
+
+	os.WriteFile(".public-ip", []byte(*newIp), 0644)
 }
 
 func (ips *ipService) updateIPAddress(oldIP, newIP string) error {
@@ -90,6 +96,8 @@ func (ips *ipService) updateIPAddress(oldIP, newIP string) error {
 
 		// Update all outdated records
 		for _, record := range outdated {
+			fmt.Printf("INFO: Updating record %s\n", record.ID)
+
 			_, err := ips.cloudflare.UpdateDNSRecord(
 				ctx,
 				cloudflare.ZoneIdentifier(zone.ID),
