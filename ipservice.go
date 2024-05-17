@@ -33,7 +33,7 @@ func New() (IpService, error) {
 
 func (ips *ipService) Start() {
 	fmt.Println("INFO: Starting IP Service")
-	ticker := time.NewTicker(1 * time.Minute)
+	ticker := time.NewTicker(1 * time.Second)
 	go func() {
 		for {
 			<-ticker.C
@@ -47,12 +47,12 @@ func (ips *ipService) verifyCorrectIPAddress() {
 
 	oldIp, err := getPreviousPublicIP()
 	if err != nil {
-		fmt.Println("ERROR: couldn't get previous public IP")
+		fmt.Printf("ERROR: couldn't get previous public IP: %v\n", err)
 	}
 
 	newIp, err := getCurrentPublicIP()
 	if err != nil {
-		fmt.Println("ERROR: couldn't get current public IP")
+		fmt.Printf("ERROR: couldn't get current public IP: %v\n", err)
 	}
 
 	// Return if the IP matches
@@ -62,7 +62,7 @@ func (ips *ipService) verifyCorrectIPAddress() {
 
 	err = ips.updateIPAddress(*oldIp, *newIp)
 	if err != nil {
-		fmt.Println("ERROR: couldn't update IP")
+		fmt.Printf("ERROR: couldn't update IP: %v\n", err)
 	}
 }
 
