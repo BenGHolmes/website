@@ -32,6 +32,7 @@ func New() (IpService, error) {
 }
 
 func (ips *ipService) Start() {
+	fmt.Println("INFO: Starting IP Service")
 	c := cron.New()
 	c.AddFunc("*/5 * * * * *", ips.verifyCorrectIPAddress)
 }
@@ -39,22 +40,22 @@ func (ips *ipService) Start() {
 func (ips *ipService) verifyCorrectIPAddress() {
 	oldIp, err := getPreviousPublicIP()
 	if err != nil {
-		// TODO: logger.Error
+		fmt.Println("ERROR: couldn't get previous public IP")
 	}
 
 	newIp, err := getCurrentPublicIP()
 	if err != nil {
-		// TODO: logger.Error
+		fmt.Println("ERROR: couldn't get current public IP")
 	}
 
 	// Return if the IP matches
 	if oldIp == newIp {
-		// TODO: logger.Info
+		fmt.Println("INFO: IP has not changed")
 	}
 
 	err = ips.updateIPAddress(*oldIp, *newIp)
 	if err != nil {
-		// TODO: logger.Warn
+		fmt.Println("ERROR: couldn't update IP")
 	}
 }
 
