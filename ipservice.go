@@ -124,7 +124,7 @@ func getPreviousPublicIP() (*string, error) {
 }
 
 func getCurrentPublicIP() (*string, error) {
-	resp, err := http.Get("ipv4.icanhazip.com")
+	resp, err := http.Get("https://ipv4.icanhazip.com")
 	if err != nil {
 		return nil, err
 	}
