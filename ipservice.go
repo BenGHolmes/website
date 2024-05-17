@@ -6,9 +6,9 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/cloudflare/cloudflare-go"
-	"github.com/robfig/cron/v3"
 )
 
 type IpService interface {
@@ -33,11 +33,18 @@ func New() (IpService, error) {
 
 func (ips *ipService) Start() {
 	fmt.Println("INFO: Starting IP Service")
-	c := cron.New()
-	c.AddFunc("*/5 * * * * *", ips.verifyCorrectIPAddress)
+	ticker := time.NewTicker(1 * time.Minute)
+	go func() {
+		for {
+			<-ticker.C
+			ips.verifyCorrectIPAddress()
+		}
+	}()
 }
 
 func (ips *ipService) verifyCorrectIPAddress() {
+	fmt.Println("INFO: verifying correct IP address")
+
 	oldIp, err := getPreviousPublicIP()
 	if err != nil {
 		fmt.Println("ERROR: couldn't get previous public IP")
