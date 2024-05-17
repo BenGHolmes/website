@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -10,6 +11,12 @@ import (
 )
 
 func main() {
+	ipService, err := New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	ipService.Start()
+
 	router := gin.Default()
 	router.StaticFile("/", "index.html")
 
